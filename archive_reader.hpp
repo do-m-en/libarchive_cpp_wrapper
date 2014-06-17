@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <istream>
 #include <memory>
+#include <vector>
 #include <archive.h>
 
 #include "archive_reader_format.hpp"
@@ -48,11 +49,11 @@ public:
   reader(const reader&) = delete;
   reader& operator=(const reader&) = delete;
 
-  template<ns_reader::format FORMAT, ns_reader::filter FILTER, typename DATA_CONTAINER>
-  static reader make_reader(DATA_CONTAINER&& container);
+  template<ns_reader::format FORMAT>
+  static reader make_reader( std::istream& stream, size_t block_size );
 
-  template<ns_reader::format FORMAT, typename DATA_CONTAINER>
-  static reader make_reader(DATA_CONTAINER&& container);
+  template<ns_reader::format FORMAT, ns_reader::filter FILTER>
+  static reader make_reader( std::istream& stream, size_t block_size);
 
   ns_reader::entry* get_next_entry();
   bool has_next_entry();
@@ -61,7 +62,7 @@ public:
   ns_reader::iterator end();
 
 private:
-  reader();
+  reader( std::istream& stream, size_t block_size );
 
   template<ns_reader::format FORMAT>
   void init_format();
@@ -69,11 +70,26 @@ private:
   template<ns_reader::filter FILTER>
   void init_filter();
 
-  template<typename DATA_CONTAINER>
-  void init_data(DATA_CONTAINER&& container);
+  void init_data();
 
   std::shared_ptr<archive> _archive;
   ns_reader::entry *_next_entry = nullptr;
+
+  class reader_container
+  {
+  public:
+    reader_container( std::istream& stream, size_t block_size ) :
+      _stream( stream )
+    {
+      _buff.resize( block_size );
+    }
+  public:
+    std::istream& _stream;
+    std::vector<char> _buff;
+  } _reader_container;
+
+  friend ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff );
+  friend int close_callback( archive*, void* );
 };
 
 }

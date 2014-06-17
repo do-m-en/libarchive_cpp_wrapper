@@ -28,16 +28,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "archive_reader.hpp"
 
-#include "archive_reader_file_container.hpp"
-#include "archive_reader_memory_container.hpp"
 #include "archive_exception.hpp"
-
 #include <archive_entry.h>
 
 namespace ns_archive {
 
-reader::reader() :
-  _archive( archive_read_new(), [](archive* archive){ archive_read_free(archive); } ) // errors in destructor will be silently ignored
+reader::reader(std::istream& stream, size_t block_size) :
+  _archive( archive_read_new(), [](archive* archive){ archive_read_free(archive); } ), // errors in destructor will be silently ignored
+  _reader_container( stream, block_size )
 {
   //
 }
@@ -119,22 +117,26 @@ READER_INIT_FILTER(LZOP, lzop)
 READER_INIT_FILTER(GRZIP, gzip)
 
 /// ---------------- init_data ---------------- //
-template<>
-void reader::init_data(ns_reader::file_container&& container)
+ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff )
 {
-  if(archive_read_open_filename(_archive.get(), container.get_path().c_str(), container.get_block_size()) != ARCHIVE_OK)
-  {
-    throw archive_exception( "Failed to open archive '" + container.get_path() + "'" );
-  }
+  reader::reader_container* p_reader_container = reinterpret_cast<reader::reader_container*>( in_reader_container );
+
+  p_reader_container->_stream.read( &p_reader_container->_buff[0], p_reader_container->_buff.size() );
+  *buff = &p_reader_container->_buff[0];
+
+  return p_reader_container->_stream.gcount();
 }
 
-template<>
-void reader::init_data(ns_reader::memory_container&& container)
+int close_callback( archive*, void* )
 {
-  std::vector<char> content = container.move_get_buffer();
-  if(archive_read_open_memory(_archive.get(), content.data(), content.size()) != ARCHIVE_OK)
+  return ARCHIVE_OK;
+}
+
+void reader::init_data()
+{
+  if(archive_read_open( _archive.get(), &_reader_container, nullptr, reader_callback, close_callback ) != ARCHIVE_OK)
   {
-    throw archive_exception( "Failed to open memory archive" );
+    throw archive_exception( "Failed to read the archive!" );
   }
 }
 
