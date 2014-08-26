@@ -31,7 +31,7 @@ project(archive_cpp_wrapper)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
-file(GLOB template_implementations "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
+file(GLOB template_implementations "${CMAKE_CURRENT_SOURCE_DIR}/*.ipp")
 
 add_library( ${PROJECT_NAME} SHARED
 
@@ -39,6 +39,9 @@ add_library( ${PROJECT_NAME} SHARED
   archive_reader_entry.cpp
   archive_reader_iterator.cpp
   archive_reader_entry_buffer.cpp
+  
+  archive_writer.cpp
+  archive_writer_entry.cpp
 
   archive_exception.cpp
 
@@ -68,7 +71,8 @@ install(
   archive_reader_filter.hpp
   archive_reader_entry.hpp
   archive_writer.hpp
-  archive_reader.tpp
+  archive_reader.ipp
+  archive_writer.ipp
   
   DESTINATION include 
 )

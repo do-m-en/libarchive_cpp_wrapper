@@ -41,6 +41,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace ns_archive {
 
+namespace ns_reader {
+
+ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff );
+
+} // ns_reader
+
 class reader
 {
 public:
@@ -53,6 +59,9 @@ public:
   static reader make_reader( std::istream& stream, size_t block_size );
 
   template<ns_reader::format FORMAT, ns_reader::filter FILTER>
+  static reader make_reader( std::istream& stream, size_t block_size);
+
+  template<ns_reader::filter FILTER>
   static reader make_reader( std::istream& stream, size_t block_size);
 
   ns_reader::entry* get_next_entry();
@@ -88,12 +97,11 @@ private:
     std::vector<char> _buff;
   } _reader_container;
 
-  friend ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff );
-  friend int close_callback( archive*, void* );
+  friend ssize_t ns_reader::reader_callback( archive* archive, void* in_reader_container, const void** buff );
 };
 
-}
+} // ns_archive
 
-#include "archive_reader.tpp"
+#include "archive_reader.ipp"
 
 #endif // ARCHIVE_READER_HPP_INCLUDED

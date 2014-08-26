@@ -26,27 +26,33 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef ARCHIVE_WRITER_FORMAT_HPP_INCLUDED
+#define ARCHIVE_WRITER_FORMAT_HPP_INCLUDED
+
 namespace ns_archive {
+namespace ns_writer {
 
-template<ns_reader::format FORMAT>
-reader reader::make_reader( std::istream& stream, size_t block_size )
+enum class format
 {
-  reader a_reader( stream, block_size );
-  a_reader.init_format<FORMAT>();
-  a_reader.init_data();
+  _7ZIP,
+  _CPIO,
+  _CPIO_POSIX,
+  _CPIO_SVR4_NOCRC,
+  _ISO9660,
+  _MTREE,
+  _SHAR,
+  _SHAR_BASE,
+  _SHAR_DUMP,
+  _TAR,
+  _TAR_GNUTAR,
+  _TAR_PAX_INTERCHANGE,
+  _TAR_PAX_RESTRICTED,
+  _TAR_USTAR,
+  _XAR,
+  _ZIP
+};
 
-  return a_reader;
+}
 }
 
-template<ns_reader::format FORMAT, ns_reader::filter FILTER>
-reader reader::make_reader( std::istream& stream, size_t block_size )
-{
-  reader a_reader( stream, block_size );
-  a_reader.init_format<FORMAT>();
-  a_reader.init_filter<FILTER>();
-  a_reader.init_data();
-
-  return a_reader;
-}
-
-}
+#endif // ARCHIVE_WRITER_FORMAT_HPP_INCLUDED

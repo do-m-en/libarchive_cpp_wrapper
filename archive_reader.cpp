@@ -117,6 +117,8 @@ READER_INIT_FILTER(LZOP, lzop)
 READER_INIT_FILTER(GRZIP, gzip)
 
 /// ---------------- init_data ---------------- //
+namespace ns_reader {
+
 ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff )
 {
   reader::reader_container* p_reader_container = reinterpret_cast<reader::reader_container*>( in_reader_container );
@@ -127,14 +129,11 @@ ssize_t reader_callback( archive* archive, void* in_reader_container, const void
   return p_reader_container->_stream.gcount();
 }
 
-int close_callback( archive*, void* )
-{
-  return ARCHIVE_OK;
-}
+} // ns_reader
 
 void reader::init_data()
 {
-  if(archive_read_open( _archive.get(), &_reader_container, nullptr, reader_callback, close_callback ) != ARCHIVE_OK)
+  if(archive_read_open( _archive.get(), &_reader_container, nullptr, ns_reader::reader_callback, nullptr ) != ARCHIVE_OK)
   {
     throw archive_exception( "Failed to read the archive!" );
   }
@@ -150,4 +149,4 @@ ns_reader::iterator reader::end()
     return ns_reader::iterator( this, true );
 }
 
-}
+} // ns_archive
