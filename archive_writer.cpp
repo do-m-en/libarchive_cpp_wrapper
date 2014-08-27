@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace ns_archive {
 
 writer::writer(std::ostream& stream) :
-  _archive( archive_write_new(), [](archive* archive){ archive_read_free(archive); } ), // errors in destructor will be silently ignored
+  _archive( archive_write_new(), [](archive* archive){ archive_write_free(archive); } ), // errors in destructor will be silently ignored
   _writer_container( stream )
 {
   //
