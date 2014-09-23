@@ -23,7 +23,7 @@ Read from archive
 try
 {
   namespace ar = ns_archive::ns_reader;
-  std::fstream fs( "some_tar_file.tar" );
+  std::fstream fs("some_tar_file.tar");
   ns_archive::reader reader = ns_archive::reader::make_reader<ar::format::_ALL, ar::filter::_ALL>(fs, 10240);
 
   for(auto entry : reader)
@@ -34,7 +34,7 @@ try
     std::cout << entry->get_stream().rdbuf() << std::endl << std::endl;
   }
 }
-catch( ns_archive::archive_exception& e )
+catch(ns_archive::archive_exception& e)
 {
   std::cout << e.what() << std::endl;
 }
@@ -51,16 +51,16 @@ Write to archive
 try
 {
   namespace ar = ns_archive::ns_reader;
-  std::ofstream outfs( "output.tar" );
-  ns_archive::writer writer2 = ns_archive::writer::make_writer<ns_archive::ns_writer::format::_TAR>( outfs, 2 );
+  std::ofstream outfs("output.tar");
+  ns_archive::writer writer2 = ns_archive::writer::make_writer<ns_archive::ns_writer::format::_TAR>(outfs, 10240);
   std::stringstream ss;
   ss << "foo";
 
-  ns_archive::entry out_entry( ss );
-  out_entry.set_header_value_pathname( "foo.txt" );
-  writer.add_entry( out_entry );
+  ns_archive::entry out_entry(ss);
+  out_entry.set_header_value_pathname("foo.txt");
+  writer.add_entry(out_entry);
 }
-catch( ns_archive::archive_exception& e )
+catch(ns_archive::archive_exception& e)
 {
   std::cout << e.what() << std::endl;
 }
@@ -86,10 +86,10 @@ try
 
   for(auto entry : reader)
   {
-    writer.add_entry( *entry.get() );
+    writer.add_entry(*entry.get());
   }
 }
-catch( ns_archive::archive_exception& e )
+catch(ns_archive::archive_exception& e)
 {
   std::cout << e.what() << std::endl;
 }
