@@ -245,7 +245,7 @@ archive_entry* entry::get_entry() const
 
 std::istream& entry::get_stream()
 {
-  if(!_has_stream)
+  if(_has_stream)
   {
     _has_stream = false;
 
