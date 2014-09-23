@@ -49,7 +49,6 @@ enum class format
   _ZIP
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_READER_FORMAT_HPP_INCLUDED

@@ -29,9 +29,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace ns_archive {
 
 template<ns_writer::format FORMAT, ns_writer::filter FILTER>
-writer writer::make_writer(std::ostream& stream)
+writer writer::make_writer(std::ostream& stream, size_t block_size)
 {
-  writer a_writer( stream );
+  writer a_writer( stream, block_size );
   a_writer.init_format<FORMAT>();
   a_writer.init_filter<FILTER>();
   a_writer.init_data();
@@ -40,11 +40,9 @@ writer writer::make_writer(std::ostream& stream)
 }
 
 template<ns_writer::format FORMAT>
-writer writer::make_writer(std::ostream& stream)
+writer writer::make_writer(std::ostream& stream, size_t block_size)
 {
-  return make_writer<FORMAT, ns_writer::filter::_NONE>( stream );
+  return make_writer<FORMAT, ns_writer::filter::_NONE>( stream, block_size );
 }
 
 }
-
-

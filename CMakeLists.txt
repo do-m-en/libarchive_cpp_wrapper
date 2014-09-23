@@ -28,20 +28,28 @@ cmake_minimum_required( VERSION 2.8.12 )
 
 project(archive_cpp_wrapper)
 
+if(NOT libarchive_LIBRARIES)
+  # set defaults for ubuntu
+  set( libarchive_LIBRARIES "/usr/lib/x86_64-linux-gnu/libarchive.so" )
+  set( libarchive_INCLUDE_DIRS "" )
+endif()
+
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
 file(GLOB template_implementations "${CMAKE_CURRENT_SOURCE_DIR}/*.ipp")
 
+include_directories( ${libarchive_INCLUDE_DIRS} )
+
 add_library( ${PROJECT_NAME} SHARED
 
+  archive_entry.cpp
+
   archive_reader.cpp
-  archive_reader_entry.cpp
   archive_reader_iterator.cpp
   archive_reader_entry_buffer.cpp
   
   archive_writer.cpp
-  archive_writer_entry.cpp
 
   archive_exception.cpp
 
@@ -49,7 +57,8 @@ add_library( ${PROJECT_NAME} SHARED
   ${template_implementations}
 )
 
-target_link_libraries( ${PROJECT_NAME} /usr/lib/x86_64-linux-gnu/libarchive.so.13 )
+target_link_libraries( ${PROJECT_NAME} ${libarchive_LIBRARIES} )
+
 set_target_properties( ${PROJECT_NAME} PROPERTIES VERSION "0.0.1" SOVERSION "1" )
 
 install(
@@ -64,12 +73,11 @@ install(
   archive_reader.hpp
   archive_writer_format.hpp
   archive_exception.hpp
-  archive_writer_entry.hpp
   archive_reader_iterator.hpp
   archive_reader_format.hpp
   archive_writer_filter.hpp
   archive_reader_filter.hpp
-  archive_reader_entry.hpp
+  archive_entry.hpp
   archive_writer.hpp
   archive_reader.ipp
   archive_writer.ipp

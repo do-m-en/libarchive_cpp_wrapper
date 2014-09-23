@@ -38,17 +38,16 @@ namespace ns_reader {
 class entry_buffer : public std::streambuf
 {
 public:
-    entry_buffer(archive* archive);
+  entry_buffer(archive* archive);
 
-    int underflow();
+  int underflow();
 
 private:
-    archive *_archive;
-    size_t _buff_max_size = 8192;
-    char _buff[8192];
+  archive *_archive;
+  size_t _buff_max_size = 8192;
+  char _buff[8192];
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_READER_ENTRY_BUFFER_HPP_INCLUDED

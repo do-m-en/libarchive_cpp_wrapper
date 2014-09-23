@@ -48,7 +48,6 @@ enum class filter
   _GRZIP
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_READER_FILTER_HPP_INCLUDED

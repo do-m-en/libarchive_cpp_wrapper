@@ -27,7 +27,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "archive_reader_iterator.hpp"
-
 #include "archive_reader.hpp"
 
 namespace ns_archive {
@@ -45,7 +44,7 @@ bool iterator::operator!=(const iterator& other) const
     return _end_pos != other._end_pos;
 }
 
-entry* iterator::operator*()
+std::shared_ptr<entry> iterator::operator*()
 {
   return _p_reader->get_next_entry();
 }
@@ -60,5 +59,4 @@ const iterator& iterator::operator++()
     return *this;
 }
 
-}
-}
+}}

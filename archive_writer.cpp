@@ -31,15 +31,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "archive_exception.hpp"
 #include "string"
 
-#include <iterator>
+#include <vector>
+#include <istream>
 
 namespace ns_archive {
 
-writer::writer(std::ostream& stream) :
+writer::writer(std::ostream& stream, size_t block_size) :
   _archive( archive_write_new(), [](archive* archive){ archive_write_free(archive); } ), // errors in destructor will be silently ignored
-  _writer_container( stream )
+  _writer_container( stream ),
+  _block_size( block_size )
 {
-  //
+  // TODO enable setting of padding parameters in constructor
+  /// OTHER OPTION archive_write_set_bytes_per_block( _archive.get(), 0 ); // prevent zero padding of last block (this also causes write callback to be called on each write without blocking until a block is full)
+  archive_write_set_bytes_in_last_block( _archive.get(), 1 ); // prevent zero padding of last block
 }
 
 void writer::finish()
@@ -47,18 +51,21 @@ void writer::finish()
   archive_write_close(_archive.get()); // TODO throw on error
 }
 
-void writer::add_entry( ns_writer::entry& entry )
+void writer::add_entry( entry& a_entry )
 {
-  if( archive_write_header( _archive.get(), entry.get_entry() ) != ARCHIVE_OK)
+  if( archive_write_header( _archive.get(), a_entry.get_entry() ) != ARCHIVE_OK)
   {
     throw archive_exception( "Error writing header to archive!" );
   }
 
-  auto& stream = entry.get_stream();
-  std::istreambuf_iterator<char> eos;
-  std::string tmp( std::istreambuf_iterator<char>(stream), eos );
+  auto& stream = a_entry.get_stream();
+  std::vector<char> buffer( _block_size );
 
-  archive_write_data( _archive.get(), tmp.c_str(), tmp.size() );
+  while( stream )
+  {
+    stream.read( &buffer[0], _block_size );
+    archive_write_data( _archive.get(), &buffer[0], stream.gcount() );
+  }
 }
 
 /// ---------------- init_format ---------------- //

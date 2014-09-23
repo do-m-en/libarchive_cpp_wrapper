@@ -61,5 +61,4 @@ int entry_buffer::underflow()
          : std::char_traits<char>::to_int_type(*gptr());
 }
 
-}
-}
+}}

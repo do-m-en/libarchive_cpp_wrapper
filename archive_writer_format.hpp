@@ -52,7 +52,6 @@ enum class format
   _ZIP
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_WRITER_FORMAT_HPP_INCLUDED

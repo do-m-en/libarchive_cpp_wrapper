@@ -36,11 +36,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "archive_reader_format.hpp"
 #include "archive_reader_filter.hpp"
-#include "archive_reader_entry.hpp"
+#include "archive_entry.hpp"
 #include "archive_reader_iterator.hpp"
 
 namespace ns_archive {
-
 namespace ns_reader {
 
 ssize_t reader_callback( archive* archive, void* in_reader_container, const void** buff );
@@ -64,7 +63,7 @@ public:
   template<ns_reader::filter FILTER>
   static reader make_reader( std::istream& stream, size_t block_size);
 
-  ns_reader::entry* get_next_entry();
+  std::shared_ptr<entry> get_next_entry();
   bool has_next_entry();
 
   ns_reader::iterator begin();
@@ -82,7 +81,8 @@ private:
   void init_data();
 
   std::shared_ptr<archive> _archive;
-  ns_reader::entry *_next_entry = nullptr;
+  std::shared_ptr<entry> _next_entry = nullptr;
+  std::shared_ptr<ns_reader::entry_buffer> _buffer;
 
   class reader_container
   {
@@ -100,7 +100,7 @@ private:
   friend ssize_t ns_reader::reader_callback( archive* archive, void* in_reader_container, const void** buff );
 };
 
-} // ns_archive
+}
 
 #include "archive_reader.ipp"
 

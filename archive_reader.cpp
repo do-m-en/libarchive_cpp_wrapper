@@ -35,22 +35,23 @@ namespace ns_archive {
 
 reader::reader(std::istream& stream, size_t block_size) :
   _archive( archive_read_new(), [](archive* archive){ archive_read_free(archive); } ), // errors in destructor will be silently ignored
+  _buffer( new ns_reader::entry_buffer( _archive.get() ) ),
   _reader_container( stream, block_size )
 {
   //
 }
 
-ns_reader::entry* reader::get_next_entry()
+std::shared_ptr<entry> reader::get_next_entry()
 {
   if(!has_next_entry())
   {
     throw archive_exception( "get_next_entry was called after all the entries were read" );
   }
 
-  ns_reader::entry* entry = _next_entry;
+  std::shared_ptr<entry> a_entry( _next_entry );
   _next_entry = nullptr;
 
-  return entry;
+  return a_entry;
 }
 
 bool reader::has_next_entry()
@@ -59,12 +60,12 @@ bool reader::has_next_entry()
 
   if(_next_entry == nullptr)
   {
-    archive_entry* entry;
-    has_next = (archive_read_next_header(_archive.get(), &entry) == ARCHIVE_OK);
+    archive_entry* a_entry;
+    has_next = (archive_read_next_header(_archive.get(), &a_entry) == ARCHIVE_OK);
 
     if(has_next)
     {
-      _next_entry = new ns_reader::entry(_archive.get(), entry);
+      _next_entry = std::make_shared<entry>( a_entry, *_buffer.get() );
     }
   }
 
@@ -149,4 +150,4 @@ ns_reader::iterator reader::end()
     return ns_reader::iterator( this, true );
 }
 
-} // ns_archive
+}

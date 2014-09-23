@@ -29,7 +29,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ARCHIVE_READER_ITERATOR_HPP_INCLUDED
 #define ARCHIVE_READER_ITERATOR_HPP_INCLUDED
 
-#include "archive_reader_entry.hpp"
+#include "archive_entry.hpp"
+#include <memory>
 
 namespace ns_archive {
 
@@ -42,7 +43,7 @@ class iterator
 public:
     iterator(reader* p_reader, bool end_pos);
     bool operator!=(const iterator& other) const;
-    entry* operator*();
+    std::shared_ptr<entry> operator*();
     const iterator& operator++();
 
 private:
@@ -50,7 +51,6 @@ private:
     reader *_p_reader;
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_READER_ITERATOR_HPP_INCLUDED

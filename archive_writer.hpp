@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "archive_writer_format.hpp"
 #include "archive_writer_filter.hpp"
-#include "archive_writer_entry.hpp"
+#include "archive_entry.hpp"
 
 namespace ns_archive {
 
@@ -56,15 +56,15 @@ public:
   void finish();
 
   template<ns_writer::format FORMAT, ns_writer::filter FILTER>
-  static writer make_writer(std::ostream& stream);
+  static writer make_writer(std::ostream& stream, size_t block_size);
 
   template<ns_writer::format FORMAT>
-  static writer make_writer(std::ostream& stream);
+  static writer make_writer(std::ostream& stream, size_t block_size);
 
-  void add_entry( ns_writer::entry& entry );
+  void add_entry( entry& a_entry );
 
 private:
-  writer(std::ostream& stream);
+  writer(std::ostream& stream, size_t block_size);
 
   template<ns_writer::format FORMAT>
   void init_format();
@@ -76,11 +76,12 @@ private:
 
   std::shared_ptr<archive> _archive;
   std::ostream& _writer_container;
+  size_t _block_size;
 
   friend ssize_t ns_writer::writer_callback( archive* archive, void* out_writer_container, const void* buff, size_t buff_size );
 };
 
-} // ns_archive
+}
 
 #include "archive_writer.ipp"
 

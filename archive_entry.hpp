@@ -33,17 +33,39 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <archive_entry.h>
 #include <string>
 #include <cstdint>
+#include <istream>
+#include <memory>
 #include <linux/types.h>
 
+#include "archive_reader_entry_buffer.hpp"
+
 namespace ns_archive {
-namespace ns_writer {
 
 class entry
 {
 public:
-  entry(std::istream& stream, size_t stream_size);
+  entry(archive_entry* entry, ns_reader::entry_buffer& entry_buffer); // TODO change to private and friend reader?
+  entry(std::istream& stream);
 
-  void clear_entry(std::istream& stream, size_t stream_size);
+  void clear_entry(std::istream& stream);
+
+  int64_t get_header_value_gid();
+  int64_t get_header_value_ino();
+  int64_t get_header_value_ino64();
+  int64_t get_header_value_size();
+  int64_t get_header_value_uid();
+  mode_t get_header_value_mode();
+  mode_t get_header_value_perm();
+  dev_t get_header_value_rdev();
+  dev_t get_header_value_rdevmajor();
+  dev_t get_header_value_rdevminor();
+  std::string get_header_value_gname();
+  std::string get_header_value_hardlink();
+  std::string get_header_value_pathname();
+  std::string get_header_value_symlink();
+  std::string get_header_value_uname();
+  unsigned int get_header_value_nlink();
+
 
   void set_header_value_gid(int64_t value);
   void set_header_value_ino(int64_t value);
@@ -65,13 +87,14 @@ public:
   void set_header_value_mtime(time_t time, long value);
 
   archive_entry* get_entry() const;
-  std::istream& get_stream() const;
+  std::istream& get_stream();
+
 private:
-  archive_entry* _entry;
-  std::istream* _stream;
+  std::shared_ptr<archive_entry> _entry;
+  std::istream _stream;
+  bool _has_stream;
 };
 
-}
 }
 
 #endif // ARCHIVE_WRITER_ENTRY_HPP_INCLUDED

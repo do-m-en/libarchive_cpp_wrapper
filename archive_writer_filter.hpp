@@ -47,7 +47,6 @@ enum class filter
   _XZ
 };
 
-}
-}
+}}
 
 #endif // ARCHIVE_WRITER_FILTER_HPP_INCLUDED
