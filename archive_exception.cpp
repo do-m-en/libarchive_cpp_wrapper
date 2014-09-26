@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace ns_archive {
 
-archive_exception::archive_exception(const std::string& what) noexcept :
-  _what(what)
+archive_exception::archive_exception(std::string&& what) noexcept :
+  _what(std::forward<std::string>(what))
 {
   //
 }
