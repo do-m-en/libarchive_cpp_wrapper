@@ -37,9 +37,9 @@ namespace ns_archive {
 class archive_exception : public std::exception
 {
 public:
-  archive_exception(const std::string& what);
+  archive_exception(const std::string& what) noexcept;
 
-  const char* what();
+  const char* what() const noexcept override;
 
 private:
   std::string _what;
