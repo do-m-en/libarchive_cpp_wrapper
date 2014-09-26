@@ -59,7 +59,7 @@ add_library( ${PROJECT_NAME} SHARED
 
 target_link_libraries( ${PROJECT_NAME} ${libarchive_LIBRARIES} )
 
-set_target_properties( ${PROJECT_NAME} PROPERTIES VERSION "0.0.1" SOVERSION "1" )
+set_target_properties( ${PROJECT_NAME} PROPERTIES VERSION "1.0.0" SOVERSION "1" )
 
 install(
   TARGETS ${PROJECT_NAME} LIBRARY
